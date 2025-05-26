@@ -4,7 +4,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'ayaahmed123/python-task1'
+        IMAGE_NAME = 'haneentharwat/python-task1'
     }
 
     stages {
