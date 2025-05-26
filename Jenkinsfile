@@ -1,22 +1,25 @@
-node {
-    def dockerImage
+@Library('jenkins-shared-library') _
 
-    stage('Checkout') {
-        checkout scm
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'ayaahmed123/python-task1'
     }
 
-    stage('Build Image') {
-        dockerImage = docker.build("haneentharwat/sample-flask:${env.BUILD_NUMBER}")
-    }
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                buildDockerImage(env.IMAGE_NAME)
+            }
+        }
 
-    stage('Push Image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-creds') {
-            dockerImage.push()
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    pushDockerImage(env.IMAGE_NAME)
+                }
+            }
         }
     }
-
-    stage('Done') {
-        echo "✅ Image pushed: haneentharwat/sample-flask:${env.BUILD_NUMBER}"
-    }
 }
-
